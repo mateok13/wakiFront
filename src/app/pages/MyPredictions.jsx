@@ -1,5 +1,5 @@
 import MyPredictionsHeader from '../components/organisms/MyPredictionsHeader';
-import MyPredictionsection from '../components/organisms/MyPredictionsection';
+import MyPredictionsection from '../components/organisms/MyPredictionSection';
 
 const myPredictionsActivas = [
   {
