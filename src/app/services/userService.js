@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/api';
+const API_URL = 'https://h2-02-ft-java-react-testing.onrender.com';
 
 export const loginUser = async (email, password) => {
   try {
