@@ -7,7 +7,7 @@ export default function StatusPredictionsCard({ status, points }) {
 
   // Lógica para mostrar el contenido según el estado
   switch (status) {
-    case 'pending':
+    case 'PENDING':
       statusContent = (
         <div className="flex items-center gap-2 px-4 py-2">
           <BiLoaderCircle
@@ -18,7 +18,7 @@ export default function StatusPredictionsCard({ status, points }) {
         </div>
       );
       break;
-    case 'lose':
+    case 'LOSE':
       statusContent = (
         <div className="flex items-center gap-2 px-4 py-2">
           <CgCloseO className="text-redWaki" size={18} />
@@ -28,7 +28,7 @@ export default function StatusPredictionsCard({ status, points }) {
         </div>
       );
       break;
-    case 'win':
+    case 'WIN':
       statusContent = (
         <div className="flex items-center gap-2 px-4 py-2">
           <FaCheck className="text-greenWaki" size={18} />

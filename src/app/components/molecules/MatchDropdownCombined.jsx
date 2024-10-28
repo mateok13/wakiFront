@@ -1,18 +1,21 @@
 import { useState, useEffect } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
-import MatchCard from '../molecules/MatchCard';
+import MatchCardCombined from '../molecules/MatchCardCombined';
 import { getMatchesLeagueDate } from '../../services/matchService';
 import { useDate } from '../../context/DateContext';
 import { formatDate } from '../../utils/dateUtils';
 
-export default function MatchDropdown({ competitionInfo }) {
+export default function MatchDropdownCombined({
+  competitionInfo,
+  handleSelectMatch,
+}) {
   const [matches, setMatches] = useState([]);
   const [activeLeague, setActiveLeague] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { selectedDate } = useDate();
-  const today = new Date();
 
+  // Función para obtener los partidos
   const fetchMatches = async () => {
     setLoading(true);
     setError(null);
@@ -20,7 +23,7 @@ export default function MatchDropdown({ competitionInfo }) {
     try {
       const fetchedMatches = await getMatchesLeagueDate(
         competitionInfo.code,
-        formatDate(selectedDate === null ? today : selectedDate)
+        formatDate(selectedDate)
       );
       // console.log(fetchedMatches);
 
@@ -117,7 +120,11 @@ export default function MatchDropdown({ competitionInfo }) {
               <p className="p-5 text-center">{error}</p>
             ) : (
               matches.map((match) => (
-                <MatchCard key={match.id} matchData={match} />
+                <MatchCardCombined
+                  key={match.id}
+                  matchData={match}
+                  handleSelectMatch={handleSelectMatch}
+                />
               ))
             )}
           </>

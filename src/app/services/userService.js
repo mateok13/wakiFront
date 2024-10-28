@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://h2-02-ft-java-react-testing.onrender.com';
+const API_URL = '/api';
 
 export const loginUser = async (email, password) => {
   try {
@@ -8,13 +8,14 @@ export const loginUser = async (email, password) => {
       email,
       password,
     });
-    return response.data.token;
+    const { token } = response.data;
+    return { token };
   } catch (error) {
     console.error(
-      'Error en el login:',
-      error.response?.data?.message || error.message
+      'Error detallado:',
+      error.response ? error.response.data : error.message
     );
-    throw new Error(error.response?.data?.message || 'Error en el login');
+    throw new Error('Error en el login');
   }
 };
 
@@ -28,11 +29,9 @@ export const createUser = async (username, email, password) => {
     return response.data;
   } catch (error) {
     console.error(
-      'Error al crear el usuario:',
-      error.response?.data?.message || error.message
+      'Error detallado:',
+      error.response ? error.response.data : error.message
     );
-    throw new Error(
-      error.response?.data?.message || 'Error al crear el usuario'
-    );
+    throw new Error('Error en el registro');
   }
 };

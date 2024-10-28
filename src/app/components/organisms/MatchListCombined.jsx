@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import MatchDropdown from '../molecules/MatchDropdown';
+import MatchDropdownCombined from '../molecules/MatchDropdownCombined';
 import { getCompetitions } from '../../services/matchService';
 
-export default function MatchList() {
+export default function MatchListCombined({ handleSelectMatch }) {
   const [competitions, setCompetitions] = useState([]);
 
   useEffect(() => {
@@ -19,16 +19,17 @@ export default function MatchList() {
   }, []);
 
   return (
-    <div className="flex w-full flex-col p-5">
+    <div className="mb-14 flex w-full flex-col p-5">
       <div className="w-full divide-y overflow-hidden rounded-large shadow-custom">
         {competitions.map((competition) => (
-          <MatchDropdown
+          <MatchDropdownCombined
             key={competition.id}
             competitionInfo={{
               code: competition.id,
               name: competition.name,
               logo: competition.logo,
             }}
+            handleSelectMatch={handleSelectMatch}
           />
         ))}
       </div>

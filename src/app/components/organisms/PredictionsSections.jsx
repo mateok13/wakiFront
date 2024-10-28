@@ -1,31 +1,53 @@
-import { useContext } from 'react';
-import { MatchContext } from '../../context/MatchContext';
+import { useEffect, useState } from 'react';
+import { useMatch } from '../../context/MatchContext';
 import { useModal } from '../../context/ModalContext';
+import { useAuth } from '../../context/AuthContext';
+import { getPredictionByMatchId } from '../../services/predictionService';
 import PredictionsPronostico from '../atoms/PredictionsPronostico';
 import YourPredictions from '../atoms/YourPredictions';
 import Button from '../atoms/Button';
-import ModalPredictions from '../organisms/ModalPredictions';
 
 export default function PredictionsSections() {
-  const { selectedMatch } = useContext(MatchContext);
-  const { isModalOpen, openModal, closeModal } = useModal();
+  const { selectedMatch } = useMatch();
+
+  const { openModal } = useModal();
+  const { userId } = useAuth();
+  const [predictionData, setPredictionData] = useState(null);
+  const [predictionExists, setPredictionExists] = useState(false);
+  console.log(selectedMatch);
+
+  useEffect(() => {
+    const fetchPredictionData = async () => {
+      try {
+        const data = await getPredictionByMatchId(userId, selectedMatch.id);
+        setPredictionData(data);
+        if (data) setPredictionExists(true);
+      } catch (error) {
+        console.error('Error al obtener la predicción:', error);
+      }
+    };
+
+    if (selectedMatch.id) {
+      fetchPredictionData();
+    }
+  }, []);
 
   return (
     <div className="flex flex-col gap-6 px-5 py-6">
-      <YourPredictions />
-      {selectedMatch && (
-        <Button className="mx-auto" onClick={() => openModal()}>
+      <YourPredictions
+        predictionData={predictionData}
+        matchStatus={selectedMatch.status}
+      />
+      {selectedMatch.status !== 'FT' && (
+        <Button
+          className="mx-auto"
+          onClick={() => openModal()}
+          disabled={predictionExists}
+        >
           Hacer predicción
         </Button>
       )}
       <PredictionsPronostico />
-
-      {/* Modal que se muestra cuando isModalOpen es true */}
-      <ModalPredictions
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        initialStep={1}
-      />
     </div>
   );
 }

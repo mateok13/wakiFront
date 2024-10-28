@@ -1,13 +1,13 @@
 import axios from 'axios';
 
-const API_URL = 'https://h2-02-ft-java-react-testing.onrender.com';
+const API_URL = '/api';
 
-// Obtener los partidos por código de competencia
-export const getMatches = async (competitionCode) => {
+// Obtener los partidos por fecha
+export const getMatchesDate = async (date) => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get(
-      `${API_URL}/match/getMatches/${competitionCode}`,
+      `${API_URL}/fixture/getFixtureDate?date=${date}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -16,16 +16,20 @@ export const getMatches = async (competitionCode) => {
     );
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener los partidos');
+    console.error(
+      'Error detallado:',
+      error.response ? error.response.data : error.message
+    );
+    throw new Error('Error al obtener los partidos de una fecha determinada');
   }
 };
 
 // Obtener los partidos de hoy por código de competencia y fecha
-export const getMatchesToday = async (competitionCode, date) => {
+export const getMatchesLeagueDate = async (competitionCode, date) => {
   try {
     const token = localStorage.getItem('token');
     const response = await axios.get(
-      `${API_URL}/match/getMatchesToday?code=${competitionCode}&date=${date}`,
+      `${API_URL}/fixture/getFixtureCodeDate?leagueId=${competitionCode}&date=${date}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -34,21 +38,50 @@ export const getMatchesToday = async (competitionCode, date) => {
     );
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener los partidos de hoy');
+    console.error(
+      'Error detallado:',
+      error.response ? error.response.data : error.message
+    );
+    throw new Error(
+      'Error al obtener los partidos de una liga y fecha determinadas'
+    );
   }
 };
 
-// Obtener competiciones por área geográfica
-export const getAreaCompetitions = async () => {
+// Obtener todas las competiciones
+export const getCompetitions = async () => {
   try {
     const token = localStorage.getItem('token');
-    const response = await axios.get(`${API_URL}/match/area-competition`, {
+    const response = await axios.get(`${API_URL}/league/allLeagues`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
     return response.data;
   } catch (error) {
-    throw new Error('Error al obtener las competiciones por área');
+    console.error(
+      'Error detallado:',
+      error.response ? error.response.data : error.message
+    );
+    throw new Error('Error al obtener las competiciones');
+  }
+};
+
+// Obtener las posiciones de una competición
+export const getStanding = async (competitionCode) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${API_URL}/standing/${competitionCode}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      'Error detallado:',
+      error.response ? error.response.data : error.message
+    );
+    throw new Error('Error al obtener las posiciones de la competencia');
   }
 };

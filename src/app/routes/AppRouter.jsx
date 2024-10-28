@@ -1,7 +1,7 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
 import Home from '../pages/Home';
+import AuthPage from '../pages/AuthPage';
 import Profile from '../pages/Profile';
 import Match from '../pages/Match';
 import ScoutPlayers from '../pages/ScoutPlayers';
@@ -9,45 +9,71 @@ import Divisiones from '../pages/Divisiones';
 import MyPredictions from '../pages/MyPredictions';
 import Details from '../pages/Details';
 import NotFound from '../pages/NotFound';
-import PrivateRoute from '../routes/PrivateRoute';
+import PrivateRoute from './PrivateRoute';
 import PersonalData from '../pages/PersonalData';
 import Notifications from '../pages/Notifications';
 import Help from '../pages/Help';
 import Setting from '../pages/Setting';
 
 export default function AppRouter() {
-  return (
-    <Router>
-      <Routes>
-        {/* Rutas públicas */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+  const location = useLocation();
 
-        {/* Rutas privadas */}
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Rutas públicas */}
         <Route
           path="/"
           element={
-            <PrivateRoute>
+            <PageWrapper>
               <Home />
-            </PrivateRoute>
+            </PageWrapper>
           }
         />
+        <Route
+          path="/auth"
+          element={
+            <PageWrapper>
+              <AuthPage />
+            </PageWrapper>
+          }
+        />
+
+        {/* Rutas privadas */}
         <Route
           path="/match"
           element={
             <PrivateRoute>
-              <Match />
+              <PageWrapper>
+                <Match />
+              </PageWrapper>
             </PrivateRoute>
           }
         >
-          <Route path="mypredictions" element={<MyPredictions />} />
-          <Route path="details" element={<Details />} />
+          <Route
+            path="mypredictions"
+            element={
+              <PageWrapper>
+                <MyPredictions />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="details"
+            element={
+              <PageWrapper>
+                <Details />
+              </PageWrapper>
+            }
+          />
         </Route>
         <Route
           path="/scout-players"
           element={
             <PrivateRoute>
-              <ScoutPlayers />
+              <PageWrapper>
+                <ScoutPlayers />
+              </PageWrapper>
             </PrivateRoute>
           }
         />
@@ -55,7 +81,9 @@ export default function AppRouter() {
           path="/divisiones"
           element={
             <PrivateRoute>
-              <Divisiones />
+              <PageWrapper>
+                <Divisiones />
+              </PageWrapper>
             </PrivateRoute>
           }
         />
@@ -63,19 +91,70 @@ export default function AppRouter() {
           path="/profile"
           element={
             <PrivateRoute>
-              <Profile />
+              <PageWrapper>
+                <Profile />
+              </PageWrapper>
             </PrivateRoute>
           }
         >
-          <Route path="personal-data" element={<PersonalData />} />
-          <Route path="notifications" element={<Notifications />} />
-          <Route path="help" element={<Help />} />
-          <Route path="setting" element={<Setting />} />
+          <Route
+            path="personal-data"
+            element={
+              <PageWrapper>
+                <PersonalData />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="notifications"
+            element={
+              <PageWrapper>
+                <Notifications />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="help"
+            element={
+              <PageWrapper>
+                <Help />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="setting"
+            element={
+              <PageWrapper>
+                <Setting />
+              </PageWrapper>
+            }
+          />
         </Route>
 
         {/* Ruta para la página de error 404 */}
-        <Route path="*" element={<NotFound />} />
+        <Route
+          path="*"
+          element={
+            <PageWrapper>
+              <NotFound />
+            </PageWrapper>
+          }
+        />
       </Routes>
-    </Router>
+    </AnimatePresence>
+  );
+}
+
+// Componente PageWrapper para animar cada vista
+function PageWrapper({ children }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      {children}
+    </motion.div>
   );
 }

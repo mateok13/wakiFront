@@ -1,22 +1,27 @@
-export default function Step4SelectMatch({ handleSelectMatch }) {
+import Searchbar from '../molecules/Searchbar';
+import SelectMatchTabs from './SelectMatchTabs';
+import MatchListCombined from '../organisms/MatchListCombined';
+
+export default function Step4SelectMatch({ setStep }) {
+  const handleSelectMatch = () => {
+    setStep(1);
+  };
+
   return (
-    <div className="flex flex-col gap-4">
-      <h2 className="text-center text-lg font-bold">Selecciona otro partido</h2>
-      {/* Lista de partidos, se podría hacer dinámica */}
-      <div className="flex flex-col gap-2">
-        <button
-          className="rounded-md bg-gray-100 px-4 py-2 text-gray-800 hover:bg-gray-200"
-          onClick={() => handleSelectMatch('Partido 1')}
-        >
-          Barcelona vs Osasuna - 26 Sep
-        </button>
-        <button
-          className="rounded-md bg-gray-100 px-4 py-2 text-gray-800 hover:bg-gray-200"
-          onClick={() => handleSelectMatch('Partido 2')}
-        >
-          Real Madrid vs Atletico - 27 Sep
-        </button>
+    <section className="flex h-full flex-col divide-y overflow-y-auto">
+      <div className="flex flex-col px-5 pb-5">
+        <h2 className="text-center text-semibold-22 font-semibold text-label">
+          ¿Con qué vas a combinar?
+        </h2>
+        <p className="px-5 text-center text-medium-18 font-medium text-grayWaki">
+          Elige un partido dentro de los próximos 5 días
+        </p>
       </div>
-    </div>
+      <div className="flex flex-col pt-5">
+        <SelectMatchTabs />
+        <Searchbar />
+        <MatchListCombined handleSelectMatch={handleSelectMatch} />
+      </div>
+    </section>
   );
 }

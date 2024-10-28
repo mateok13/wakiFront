@@ -1,15 +1,9 @@
-import { useState, useContext } from 'react';
-import { DateContext } from '../../context/DateContext';
-
-// Función para ajustar la fecha actual según un número de días
-const adjustDate = (days) => {
-  const date = new Date();
-  date.setDate(date.getDate() + days);
-  return date;
-};
+import { useState } from 'react';
+import { useDate } from '../../context/DateContext';
+import { adjustDate, formatDateNav } from '../../utils/dateUtils';
 
 export default function MatchNavbar() {
-  const { updateDate, formatDateNav } = useContext(DateContext);
+  const { updateSelectedDate } = useDate();
 
   const today = adjustDate(0);
   const yesterday = adjustDate(-1);
@@ -27,7 +21,7 @@ export default function MatchNavbar() {
     const { position, date } = tabData[tab];
 
     setUnderlinePosition(position);
-    updateDate(date);
+    updateSelectedDate(date);
   };
 
   return (
