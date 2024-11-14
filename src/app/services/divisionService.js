@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/api';
+const API_URL = 'https://no-country-hackaton.onrender.com';
 
 // Actualizar una división
 export const updateDivision = async (divisionData) => {

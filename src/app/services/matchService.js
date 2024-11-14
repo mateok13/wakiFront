@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/api';
+const API_URL = 'https://no-country-hackaton.onrender.com';
 
 // Obtener los partidos por fecha
 export const getMatchesDate = async (date) => {

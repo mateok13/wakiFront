@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = '/api';
+const API_URL = 'https://no-country-hackaton.onrender.com';
 
 // Obtener todas las predicciones por ID de perfil
 export const getPredictions = async (profileId) => {
