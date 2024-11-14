@@ -6,8 +6,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        // target: 'https://h2-02-ft-java-react-testing.onrender.com',
-        target: 'http://localhost:8080',
+        target: 'https://no-country-hackaton.onrender.com',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
