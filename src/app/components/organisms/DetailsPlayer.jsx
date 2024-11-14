@@ -113,7 +113,7 @@ export default function DetailsPlayer({ playerData }) {
   }, []);
 
   return (
-    <div className="flex w-full flex-col gap-5 overflow-hidden px-5 pt-7 text-regular-16">
+    <div className="flex w-full flex-col justify-center gap-5 overflow-hidden px-5 pt-7 text-regular-16">
       <PlayerInfo playerInfo={playerInfo} />
       <div className="flex items-center justify-between">
         <h2 className="text-regularNav-16 font-medium text-label">

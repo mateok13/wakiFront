@@ -8,7 +8,7 @@ export default function PlayerInfo({ playerInfo }) {
     : '';
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-3 w-full justify-center">
       <h2 className="text-regularNav-16 font-medium text-label">
         Datos del jugador
       </h2>
