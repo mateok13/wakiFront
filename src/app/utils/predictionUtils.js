@@ -1,8 +1,18 @@
 // Función para calcular los puntos de una predicción según la opción seleccionada
-export const calculatePoints = (selectedOption, matchPredictions) => {
+export const getPoints = (selectedOption, matchPredictions) => {
+  const optionsMap = {
+    LOCAL: matchPredictions?.localWin,
+    DRAW: matchPredictions?.draw,
+    AWAY: matchPredictions?.visitorWin,
+  };
+  return optionsMap[selectedOption] || 0;
+};
+
+// Devuelve el name o Empate dependiendo la elección del usuario
+export const getTeamName = (selectedOption, localTeam, visitorTeam) => {
   return selectedOption === 'LOCAL'
-    ? matchPredictions.localWin
-    : selectedOption === 'DRAW'
-      ? matchPredictions.draw
-      : matchPredictions.visitorWin;
+    ? localTeam.name
+    : selectedOption === 'AWAY'
+      ? visitorTeam.name
+      : 'Empate';
 };

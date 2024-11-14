@@ -1,78 +1,76 @@
+// MyPredictionSection.jsx
 import { useEffect, useState } from 'react';
-import clsx from 'clsx';
 import { usePredictions } from '../../context/PredictionsContext';
+import { useDate } from '../../context/DateContext';
 import { useAuth } from '../../context/AuthContext';
-import { formatDate } from '../../utils/dateUtils';
-import { getRemainingPredictionByDate } from '../../services/profileService';
 import { fetchProfileAndCheckPredictions } from '../../utils/profileUtils';
+import { motion } from 'framer-motion';
+import {
+  ActivePredictions,
+  NoPredictions,
+} from '../atoms/PredictionsComponents';
+import {
+  ListActivePredictions,
+  ListPastPredictions,
+} from '../molecules/ListPredictions';
+import { usePredictionsByDate } from '../../hooks/usePredictionsByDate';
 
-export default function PredictionsProgress({
-  totalPredictions = 5,
-  date = formatDate(new Date()),
-  cantCircles,
-}) {
-  const { remainingPredictions, fetchRemainingPredictions } = usePredictions();
+export default function MyPredictionSection() {
+  const { selectedDate, updateSelectedDate } = useDate();
+  const { allPredictions } = usePredictions();
   const { userId } = useAuth();
   const [shouldFetch, setShouldFetch] = useState(false);
-  const [remainingPredictionsForTwo, setRemainingPredictionsForTwo] = useState(
-    totalPredictions === 2 ? 0 : null
+
+  useEffect(() => {
+    updateSelectedDate('Todas');
+  }, []);
+
+  // Simplificación al trasladar la lógica de remainingPredictions al hook
+  const datePredictions = usePredictionsByDate(userId, selectedDate);
+  const filteredPredictions = selectedDate ? datePredictions : allPredictions;
+
+  // Define active and past predictions based on status
+  const activePredictions = filteredPredictions.filter(
+    (prediction) => prediction.status === 'PENDING'
+  );
+  const pastPredictions = filteredPredictions.filter(
+    (prediction) => prediction.status !== 'PENDING'
   );
 
-  // Verifica si se deben obtener las predicciones restantes
   useEffect(() => {
-    const checkRemainingPredictions = async () => {
-      const canFetch = await fetchProfileAndCheckPredictions(userId, date);
-      setShouldFetch(canFetch);
+    setShouldFetch(filteredPredictions.length > 0);
+  }, [filteredPredictions]);
+
+  useEffect(() => {
+    const checkPredictions = async () => {
+      const canFetchPredictions = await fetchProfileAndCheckPredictions(userId);
+      setShouldFetch(canFetchPredictions);
     };
-    checkRemainingPredictions();
-  }, [userId, date]);
-
-  useEffect(() => {
-    if (totalPredictions === 5 && shouldFetch) {
-      fetchRemainingPredictions(date);
-    } else if (totalPredictions === 2 && shouldFetch) {
-      // Fetch adicional solo para totalPredictions de 2
-      const fetchForTwo = async () => {
-        const { remainingPredictions } = await getRemainingPredictionByDate(
-          userId,
-          date
-        );
-        setRemainingPredictionsForTwo(remainingPredictions);
-      };
-      fetchForTwo();
-    }
-  }, [fetchRemainingPredictions, date, totalPredictions, shouldFetch]);
-
-  const usedPredictions =
-    totalPredictions === 5
-      ? 5 - remainingPredictions
-      : 5 - remainingPredictionsForTwo;
-
-  const circles = [];
-
-  for (let i = 0; i < cantCircles; i++) {
-    circles.push(
-      <span
-        key={i}
-        className={clsx(
-          'rounded-full border-[1.11px] border-purpleWaki',
-          i < usedPredictions ? 'bg-purpleWaki' : 'bg-transparent',
-          totalPredictions !== 5 ? 'h-[10px] w-[10px]' : 'h-3 w-3'
-        )}
-      />
-    );
-  }
-
-  if (totalPredictions !== 5) {
-    return <div className="flex space-x-1">{circles}</div>;
-  }
+    checkPredictions();
+  }, [userId]);
 
   return (
-    <div className="fixed inset-x-0 bottom-0 flex h-14 items-center justify-between rounded-t-xl bg-white px-10 py-4 shadow-[0_0_11.8px_0_rgba(0,0,0,0.2)]">
-      <p className="text-regular-14 font-medium text-purpleWaki">
-        Predicciones utilizadas de hoy:
-      </p>
-      <div className="flex space-x-1">{circles}</div>
+    <div className="mb-[90px] flex min-h-[308px] items-center justify-center rounded-t-large bg-white p-5">
+      <motion.div
+        key={selectedDate}
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 10 }}
+        transition={{ duration: 0.3 }}
+        className="grow"
+      >
+        {shouldFetch ? (
+          <>
+            <ActivePredictions />
+            <ListActivePredictions activePredictions={activePredictions} />
+            {pastPredictions.length > 0 && (
+              <ListPastPredictions pastPredictions={pastPredictions} />
+            )}
+          </>
+        ) : (
+          <NoPredictions />
+        )}
+      </motion.div>
     </div>
   );
 }

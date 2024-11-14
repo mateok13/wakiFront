@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import ButtonWakiWhite from '../components/molecules/ButtonWakiWhite';
-import ProfileNavbar from '../components/molecules/ProfileNavbar';
+import PageNavbar from '../components/molecules/PageNavbar';
 import { FiMoon } from 'react-icons/fi';
 import { IoIosNotificationsOutline } from 'react-icons/io';
 import { BsShieldLock } from 'react-icons/bs';
 import { BsFileText } from 'react-icons/bs';
 
 export default function Setting() {
-  const iconSize = 24;
+  const iconSize = 32;
   const iconColor = 'text-[#999999]';
 
   const [darkMode, setDarkMode] = useState(false);
@@ -41,9 +41,9 @@ export default function Setting() {
   ];
 
   return (
-    <main className="flex min-h-screen w-full flex-col overflow-hidden sm:min-w-[570px]">
-      <ProfileNavbar beforePage={'Perfil'} titlePage={'Configuración'} />
-      <div className="flex flex-col items-center space-y-4 p-10">
+    <main className="mt-[80px] flex min-h-screen w-full flex-col overflow-hidden sm:max-w-[570px]">
+      <PageNavbar beforePage={'Perfil'} titlePage={'Configuración'} />
+      <div className="flex flex-col items-center space-y-4 px-5 py-10">
         {buttons.map((button, index) => (
           <ButtonWakiWhite
             key={index}

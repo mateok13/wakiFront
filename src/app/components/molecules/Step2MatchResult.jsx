@@ -1,21 +1,22 @@
-import { useMatch } from '../../context/MatchContext';
+import { useModal } from '../../context/ModalContext';
 import { useAuth } from '../../context/AuthContext';
 import { usePredictions } from '../../context/PredictionsContext';
+import { validatePrediction } from '../../services/profileService';
+import { getPoints } from '../../utils/predictionUtils';
+import { formatDate } from '../../utils/dateUtils';
 import Button from '../atoms/Button';
 import PredictionsSummary from '../atoms/PredictionsSummary';
-import { calculatePoints } from '../../utils/predictionUtils';
-import { formatDate } from '../../utils/dateUtils';
-import { validatePrediction } from '../../services/profileService';
 
-export default function Step2MatchResult({
-  selectedOption,
-  setSelectedOption,
-  handleSubmitPrediction,
-  handleMakeCombinedPrediction,
-}) {
-  const { selectedMatch } = useMatch();
+export default function Step2MatchResult({ handleSubmitPrediction }) {
+  const {
+    selectedOption,
+    setSelectedOption,
+    handleNextStep,
+    startNewJourney,
+    selectedPredictionMatch,
+  } = useModal();
   const { userId } = useAuth();
-  const { predictions, addPrediction } = usePredictions();
+  const { predictions, fetchAllPredictions } = usePredictions();
 
   const {
     id,
@@ -24,29 +25,17 @@ export default function Step2MatchResult({
     startTime,
     odds: matchPredictions,
     league,
-  } = selectedMatch;
+  } = selectedPredictionMatch;
 
-  const points = calculatePoints(selectedOption, matchPredictions);
+  const points = getPoints(selectedOption, matchPredictions);
 
-  const handleAddPrediction = (isCombined) => {
-    addPrediction(
-      {
-        matchId: `${id}`,
-        expectedResult: selectedOption,
-        homeTeam: localTeam.name,
-        awayTeam: visitorTeam.name,
-        matchDay: formatDate(startTime),
-        homeShield: localTeam.logoUrl,
-        awayShield: visitorTeam.logoUrl,
-        pay: parseFloat(points),
-        competition: league.name,
-        competitionShield: league.logo,
-      },
-      isCombined
-    );
+  // Maneja el inicio de la predicción combinada
+  const handleMakeCombinedPrediction = () => {
+    handleNextStep(3);
   };
 
-  const handleAddOnePrediction = () => {
+  // Maneja la adición de una predicción única
+  const handleAddOnePrediction = async () => {
     const newPrediction = [
       {
         matchId: `${id}`,
@@ -63,10 +52,38 @@ export default function Step2MatchResult({
     ];
 
     if (predictions.length > 0) {
-      newPrediction.push(...predictions);
-      console.log('newPrediction ', newPrediction);
+      const matchesPredictions = predictions.map(
+        (prediction) => prediction.match
+      );
+      newPrediction.push(...matchesPredictions);
     }
-    validatePrediction(userId, newPrediction);
+
+    try {
+      // Llamada a validatePrediction y espera su finalización
+      await validatePrediction(userId, newPrediction);
+      // Llamar a fetchAllPredictions si validatePrediction fue exitosa
+      await fetchAllPredictions();
+      console.log('Predicción validada con éxito');
+    } catch (error) {
+      console.error('Error al validar la predicción:', error);
+    }
+  };
+
+  // Maneja la predicción combinada
+  const handleAddPrediction = () => {
+    startNewJourney({
+      matchId: `${id}`,
+      expectedResult: selectedOption,
+      homeTeam: localTeam.name,
+      awayTeam: visitorTeam.name,
+      matchDay: formatDate(startTime),
+      homeShield: localTeam.logoUrl,
+      awayShield: visitorTeam.logoUrl,
+      pay: parseFloat(points),
+      competition: league.name,
+      competitionShield: league.logo,
+    });
+    handleMakeCombinedPrediction();
   };
 
   return (
@@ -81,7 +98,7 @@ export default function Step2MatchResult({
       </div>
 
       {/* Opciones de predicción */}
-      <div className="flex h-full max-h-[calc(100%-110px)] flex-col justify-between gap-4 px-10 py-7">
+      <div className="flex h-full max-h-[calc(100%-130px)] flex-col justify-between gap-4 px-10 py-7">
         <div className="grid shrink grid-cols-2 grid-rows-[1fr_auto] gap-4 hover:shrink-0">
           {/* Local */}
           <button
@@ -107,6 +124,7 @@ export default function Step2MatchResult({
             </p>
           </button>
 
+          {/* Empate */}
           <button
             className={`order-last col-span-2 flex flex-col items-center justify-between gap-2 rounded-large border-2 bg-white p-2 text-medium-18 font-medium text-label shadow-[0_0_9.2px_0_rgba(0,0,0,0.25)] transition-all duration-300 ${
               selectedOption === 'DRAW'
@@ -121,6 +139,7 @@ export default function Step2MatchResult({
             </p>
           </button>
 
+          {/* Visitante */}
           <button
             className={`flex flex-col items-center justify-between gap-2 rounded-large border-2 bg-white p-2 shadow-[0_0_9.2px_0_rgba(0,0,0,0.25)] transition-all duration-300 ${
               selectedOption === 'AWAY'
@@ -153,7 +172,9 @@ export default function Step2MatchResult({
               handleAddOnePrediction();
               handleSubmitPrediction();
             }}
-            disabled={selectedOption === 'Resultado'}
+            disabled={
+              selectedOption === 'RESULTADO_FINAL' || selectedOption === 'GOLES'
+            }
           >
             Predecir
           </Button>
@@ -161,24 +182,23 @@ export default function Step2MatchResult({
             variant="outline"
             size="large"
             className="w-full"
-            onClick={() => {
-              handleAddPrediction(true);
-              handleMakeCombinedPrediction();
-            }}
-            disabled={selectedOption === 'Resultado'}
+            onClick={handleAddPrediction}
+            disabled={
+              selectedOption === 'RESULTADO_FINAL' || selectedOption === 'GOLES'
+            }
           >
             Hacer combinada
           </Button>
         </div>
       </div>
 
-      {selectedOption !== 'Resultado' && (
+      {selectedOption !== 'RESULTADO_FINAL' && selectedOption !== 'GOLES' && (
         <PredictionsSummary
           selected={selectedOption}
           homeTeam={localTeam}
           awayTeam={visitorTeam}
           points={points}
-          status="pending"
+          status="PENDING"
         />
       )}
     </section>

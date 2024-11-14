@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { Tabs, TabsHeader, Tab } from '@material-tailwind/react';
 import { useDate } from '../../context/DateContext';
 import {
   getUpcomingDays,
@@ -13,47 +14,50 @@ export default function SelectMatchTabs() {
   const today = tabs[1];
   const [activeTab, setActiveTab] = useState(formatDateNav(today));
 
-  useEffect(() => {
-    updateSelectedDate(today);
-  }, []);
-
   const handleTabClick = (tab) => {
-    console.log(formatDateNav(tab));
     setActiveTab(formatDateNav(tab));
     updateSelectedDate(tab);
   };
 
   return (
-    <nav className="w-full overflow-x-auto">
-      <div className="flex w-full justify-between space-x-4 whitespace-nowrap">
-        {tabs.slice(1).map((tab) => (
-          <div className="flex flex-col items-center gap-2" key={tab}>
-            {tab !== today ? (
-              <PredictionsProgress
-                totalPredictions={2}
-                date={formatDate(tab)}
-                cantCircles={2}
-              />
-            ) : (
-              <PredictionsProgress
-                totalPredictions={2}
-                date={formatDate(tab)}
-                cantCircles={5}
-              />
-            )}
-            <button
+    <Tabs
+      value={activeTab}
+      className="w-full overflow-x-auto"
+      onChange={(tab) => handleTabClick(tab)}
+    >
+      <TabsHeader
+        className="flex w-full justify-between space-x-4 whitespace-nowrap rounded-none bg-transparent p-0"
+        indicatorProps={{
+          className:
+            'bg-transparent border-b-[3px] border-label shadow-none rounded-none',
+        }}
+      >
+        {tabs.slice(1).map((tab, index) => {
+          const date = formatDate(tab);
+          return (
+            <Tab
+              key={index}
+              value={formatDateNav(tab)}
               onClick={() => handleTabClick(tab)}
-              className={`w-20 px-4 pb-1 text-regularNav-16 transition-colors duration-300 ${
+              className={`px-4 pb-1 text-regularNav-16 transition-colors duration-300 ${
                 activeTab === formatDateNav(tab)
-                  ? 'border-b-[3px] border-label font-medium text-label'
+                  ? 'font-medium text-label'
                   : 'text-grayWaki'
               }`}
+              aria-selected={activeTab === formatDateNav(tab)}
             >
-              {tab !== today ? `${formatDateNav(tab)}` : 'Hoy'}
-            </button>
-          </div>
-        ))}
-      </div>
-    </nav>
+              <div className="flex flex-col items-center gap-2">
+                <PredictionsProgress
+                  totalPredictions={2}
+                  date={date}
+                  cantCircles={tab === today ? 5 : 2}
+                />
+                {tab === today ? 'Hoy' : formatDateNav(tab)}
+              </div>
+            </Tab>
+          );
+        })}
+      </TabsHeader>
+    </Tabs>
   );
 }

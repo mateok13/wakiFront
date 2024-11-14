@@ -3,12 +3,9 @@ import PredictionsNavbar from '../atoms/PredictionsNavbar';
 import { BsArrowLeft } from 'react-icons/bs';
 import PredictionsMatch from '../atoms/PredictionsMatch';
 
-export default function PredictionsHeader({
-  underlinePosition,
-  setUnderlinePosition,
-}) {
+export default function PredictionsHeader({ activeTab, setActiveTab }) {
   return (
-    <div className="relative w-full shadow-[0_0_10.2px_0_rgba(0,0,0,0.2)]">
+    <header className="relative w-full shadow-navbar">
       <div className="px-5 pb-4 pt-8">
         {/* Botón de volver */}
         <Link to="/match">
@@ -22,11 +19,8 @@ export default function PredictionsHeader({
         <PredictionsMatch />
       </div>
 
-      {/* Pestañas de selección de fecha */}
-      <PredictionsNavbar
-        underlinePosition={underlinePosition}
-        setUnderlinePosition={setUnderlinePosition}
-      />
-    </div>
+      {/* Pestañas de selección de sección */}
+      <PredictionsNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
+    </header>
   );
 }

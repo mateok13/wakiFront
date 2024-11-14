@@ -5,7 +5,7 @@ import { getMatchesLeagueDate } from '../../services/matchService';
 import { useDate } from '../../context/DateContext';
 import { formatDate } from '../../utils/dateUtils';
 
-export default function MatchDropdown({ competitionInfo }) {
+export default function MatchDropdown({ competitionInfo, isCombined }) {
   const [matches, setMatches] = useState([]);
   const [activeLeague, setActiveLeague] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -22,11 +22,11 @@ export default function MatchDropdown({ competitionInfo }) {
         competitionInfo.code,
         formatDate(selectedDate === null ? today : selectedDate)
       );
-      // console.log(fetchedMatches);
 
       setMatches(
         fetchedMatches.map((match) => ({
           id: match.fixture.id,
+          referee: match.fixture.referee,
           localTeam: {
             name: match.fixture.teams.home.teamName,
             logoUrl: match.fixture.teams.home.teamLogo,
@@ -37,17 +37,17 @@ export default function MatchDropdown({ competitionInfo }) {
           },
           score:
             match.fixture.status.shortStatus === 'FT'
-              ? match.fixture.goals.homeGoals !== null &&
-                match.fixture.goals.awayGoals !== null
-                ? `${match.fixture.goals.homeGoals} - ${match.fixture.goals.awayGoals}`
-                : '? - ?'
-              : 'vs',
+              ? `${match.fixture.goals.homeGoals} - ${match.fixture.goals.awayGoals}`
+              : match.fixture.status.shortStatus === 'NS'
+                ? 'vs'
+                : `${match.fixture.goals.homeGoals || 0} - ${match.fixture.goals.awayGoals || 0}`,
           odds: {
             localWin: match.odds[0]?.bookmaker?.bet?.values.homeOdd || 'N/A',
             draw: match.odds[0]?.bookmaker?.bet?.values.drawOdd || 'N/A',
             visitorWin: match.odds[0]?.bookmaker?.bet?.values.awayOdd || 'N/A',
           },
           startTime: match.fixture.date,
+          stadium: match.fixture.venue.venueName,
           status: match.fixture.status.shortStatus,
           league: {
             id: match.fixture.league.id,
@@ -63,12 +63,11 @@ export default function MatchDropdown({ competitionInfo }) {
     }
   };
 
-  // useEffect para actualizar los partidos cuando cambie la fecha o se abra la liga
   useEffect(() => {
     if (activeLeague) {
       fetchMatches();
     }
-  }, [selectedDate, activeLeague]); // Se ejecuta cuando cambia selectedDate o activeLeague
+  }, [selectedDate, activeLeague]);
 
   const toggleLeague = () => {
     setActiveLeague(!activeLeague);
@@ -91,7 +90,6 @@ export default function MatchDropdown({ competitionInfo }) {
           </span>
         </div>
         <div className="flex-shrink-0 transform transition-transform duration-300">
-          {/* Giramos la flecha según el estado */}
           <IoIosArrowDown
             className={`text-blueWaki transition-transform duration-300 ${
               activeLeague ? 'rotate-180' : 'rotate-0'
@@ -101,23 +99,23 @@ export default function MatchDropdown({ competitionInfo }) {
         </div>
       </button>
 
-      {/* Mostrar los partidos si la liga está activa con transición */}
       <div
-        className={`transition-max-height divide-y overflow-scroll duration-500 ease-in-out ${
+        className={`transition-max-height divide-y overflow-y-scroll duration-500 ease-in-out ${
           activeLeague ? 'max-h-screen' : 'max-h-0'
         }`}
       >
-        {/* Mostrar solo el mensaje de carga mientras se está cargando */}
         {loading && <p className="p-5 text-center">Cargando partidos...</p>}
-
-        {/* Mostrar los partidos o el mensaje de "No hay partidos" solo cuando no esté cargando */}
         {!loading && (
           <>
             {error ? (
               <p className="p-5 text-center">{error}</p>
             ) : (
               matches.map((match) => (
-                <MatchCard key={match.id} matchData={match} />
+                <MatchCard
+                  key={match.id}
+                  matchData={match}
+                  isCombined={isCombined}
+                />
               ))
             )}
           </>

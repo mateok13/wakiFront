@@ -2,14 +2,13 @@ import { useState, useEffect } from 'react';
 import { useMatch } from '../context/MatchContext';
 import { getStanding } from '../services/matchService';
 import TablePositions from '../components/organisms/TablePositions';
-import LogoLaLiga from '../../assets/laliga.png';
+import LeagueEmblem from '../../assets/leagueEmblem.png';
 
 export default function Positions() {
   const { selectedMatch } = useMatch();
   const [standings, setStandings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  console.log(selectedMatch);
 
   useEffect(() => {
     const fetchStandings = async () => {
@@ -38,7 +37,7 @@ export default function Positions() {
       <div className="flex items-center gap-2">
         {/* Liga y logo */}
         <img
-          src={standings[0].league.leagueLogo || LogoLaLiga}
+          src={standings[0].league.leagueLogo || LeagueEmblem}
           alt={`Logo ${standings[0].league.leagueName}`}
           width={'32px'}
         />

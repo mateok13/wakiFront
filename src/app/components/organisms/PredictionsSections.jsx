@@ -2,35 +2,44 @@ import { useEffect, useState } from 'react';
 import { useMatch } from '../../context/MatchContext';
 import { useModal } from '../../context/ModalContext';
 import { useAuth } from '../../context/AuthContext';
-import { getPredictionByMatchId } from '../../services/predictionService';
+import {
+  getPredictionByMatchId,
+  getPredictionExistenceByMatchId,
+} from '../../services/predictionService';
 import PredictionsPronostico from '../atoms/PredictionsPronostico';
 import YourPredictions from '../atoms/YourPredictions';
 import Button from '../atoms/Button';
 
 export default function PredictionsSections() {
   const { selectedMatch } = useMatch();
-
   const { openModal } = useModal();
   const { userId } = useAuth();
   const [predictionData, setPredictionData] = useState(null);
   const [predictionExists, setPredictionExists] = useState(false);
-  console.log(selectedMatch);
 
   useEffect(() => {
-    const fetchPredictionData = async () => {
+    const checkPredictionExistence = async () => {
       try {
-        const data = await getPredictionByMatchId(userId, selectedMatch.id);
-        setPredictionData(data);
-        if (data) setPredictionExists(true);
+        const exists = await getPredictionExistenceByMatchId(
+          userId,
+          selectedMatch.id
+        );
+        setPredictionExists(exists);
+
+        if (exists) {
+          const data = await getPredictionByMatchId(userId, selectedMatch.id);
+          setPredictionData(data);
+        }
       } catch (error) {
-        console.error('Error al obtener la predicción:', error);
+        console.error(
+          'Error al verificar la existencia de la predicción:',
+          error
+        );
       }
     };
 
-    if (selectedMatch.id) {
-      fetchPredictionData();
-    }
-  }, []);
+    checkPredictionExistence();
+  }, [userId, selectedMatch.id]);
 
   return (
     <div className="flex flex-col gap-6 px-5 py-6">
@@ -42,7 +51,7 @@ export default function PredictionsSections() {
         <Button
           className="mx-auto"
           onClick={() => openModal()}
-          disabled={predictionExists}
+          disabled={predictionExists || selectedMatch.odds.localWin === 'N/A'}
         >
           Hacer predicción
         </Button>

@@ -5,7 +5,7 @@ import AuthPage from '../pages/AuthPage';
 import Profile from '../pages/Profile';
 import Match from '../pages/Match';
 import ScoutPlayers from '../pages/ScoutPlayers';
-import Divisiones from '../pages/Divisiones';
+import Divisions from '../pages/Divisions';
 import MyPredictions from '../pages/MyPredictions';
 import Details from '../pages/Details';
 import NotFound from '../pages/NotFound';
@@ -14,6 +14,8 @@ import PersonalData from '../pages/PersonalData';
 import Notifications from '../pages/Notifications';
 import Help from '../pages/Help';
 import Setting from '../pages/Setting';
+import RewardsDivision from '../pages/RewardsDivision';
+import PlayerDetails from '../pages/PlayerDetails';
 
 export default function AppRouter() {
   const location = useLocation();
@@ -78,11 +80,11 @@ export default function AppRouter() {
           }
         />
         <Route
-          path="/divisiones"
+          path="/divisions"
           element={
             <PrivateRoute>
               <PageWrapper>
-                <Divisiones />
+                <Divisions />
               </PageWrapper>
             </PrivateRoute>
           }
@@ -130,6 +132,25 @@ export default function AppRouter() {
             }
           />
         </Route>
+
+        {/* Rutas para las páginas de recompensas */}
+        <Route
+          path="/divisions/rewards-division"
+          element={
+            <PageWrapper>
+              <RewardsDivision />
+            </PageWrapper>
+          }
+        />
+
+        <Route
+          path="/scout-players/player-details/:id"
+          element={
+            <PageWrapper>
+              <PlayerDetails />
+            </PageWrapper>
+          }
+        />
 
         {/* Ruta para la página de error 404 */}
         <Route

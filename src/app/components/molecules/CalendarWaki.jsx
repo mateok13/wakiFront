@@ -5,7 +5,7 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md';
 import { useDate } from '../../context/DateContext';
 
-export default function CalendarWaki({ closeModal, isClosing }) {
+export default function CalendarWaki({ closeModalCalendar, isClosing }) {
   const { selectedDate, updateSelectedDate } = useDate();
   const [showMonths, setShowMonths] = useState(false);
   const modalRef = useRef(null);
@@ -54,7 +54,7 @@ export default function CalendarWaki({ closeModal, isClosing }) {
       day
     );
     updateSelectedDate(newDate);
-    closeModal();
+    closeModalCalendar();
   };
 
   const handleMonthClick = (monthIndex) => {
@@ -64,7 +64,7 @@ export default function CalendarWaki({ closeModal, isClosing }) {
 
   const handleClickOutside = (event) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
-      closeModal();
+      closeModalCalendar();
     }
   };
 
@@ -78,14 +78,14 @@ export default function CalendarWaki({ closeModal, isClosing }) {
   return (
     <div
       ref={modalRef}
-      className={`relative w-full max-w-md rounded-t-lg bg-white p-8 shadow-lg shadow-gray-500 ${
+      className={`relative w-full max-w-md rounded-t-lg bg-white p-8 shadow-lg shadow-grayLightWaki ${
         isClosing ? 'animate-slideOut' : 'animate-slideIn'
       }`}
     >
       <h2 className="mb-4 text-center text-semibold-22 font-semibold text-label">
         Selecciona una fecha
       </h2>
-      <div className="mb-4 flex items-center justify-between text-[14px]">
+      <div className="mb-4 flex items-center justify-between text-regular-14">
         <span
           className="flex cursor-pointer items-center text-lg font-medium"
           onClick={() => setShowMonths(!showMonths)}
