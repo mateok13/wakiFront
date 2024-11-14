@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://no-country-hackaton.onrender.com';
+const API_URL = '/api';
 
 export const loginUser = async (email, password) => {
   try {
