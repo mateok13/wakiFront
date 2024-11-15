@@ -63,30 +63,40 @@ export default function ProfileList() {
   const notificationCount = notifications.length;
 
   return (
-    <div>
-      {options.map((option, index) => (
-        <div
-          key={index}
-          onClick={() => {
-            if (option.action === 'logout') {
-              logout();
-            } else if (option.action === 'updateDate') {
-              updateSelectedDate(new Date());
-            }
-          }}
-          className={`relative flex h-14 w-full items-center justify-between bg-white px-5 text-label ${
-            index === 0 ? 'rounded-t-lg' : ''
-          } ${index === options.length - 1 ? 'rounded-b-lg' : ''}`}
-        >
-          <div className="flex items-center">
-            {option.icon}
-            <span className="ml-3">{option.name}</span>
+    <section className="p-5">
+      <div className="flex flex-col divide-y-2 overflow-hidden rounded-large shadow-custom">
+        {options.map((option, index) => (
+          <div key={index} className="relative">
+            <a
+              href={option.link || '#'}
+              onClick={
+                option.action === 'logout'
+                  ? logout
+                  : option.action === 'updateDate'
+                    ? () => updateSelectedDate(new Date())
+                    : null
+              }
+              className={`relative flex h-14 w-full items-center justify-between bg-white px-5 text-label ${
+                index === 0 ? 'rounded-t-lg' : ''
+              } ${index === options.length - 1 ? 'rounded-b-lg' : ''}`}
+            >
+              <div className="grid grid-cols-[24px_1fr] items-center gap-2">
+                <div className="flex h-6 w-6 items-center justify-center">
+                  {option.icon}
+                </div>
+                <span className="text-regularNav-14 whitespace-nowrap">
+                  {option.name}
+                </span>
+              </div>
+              {option.name === 'Notificaciones' && notificationCount > 0 && (
+                <span className="regular-12 absolute right-5 flex h-6 w-6 items-center justify-center rounded-full bg-blueWaki font-medium text-white">
+                  {notificationCount}
+                </span>
+              )}
+            </a>
           </div>
-          {option.name === 'Notificaciones' && notificationCount > 0 && (
-            <span className="ml-3">{notificationCount}</span>
-          )}
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </section>
   );
 }

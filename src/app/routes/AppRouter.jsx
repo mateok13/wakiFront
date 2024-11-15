@@ -17,47 +17,165 @@ import Setting from '../pages/Setting';
 import RewardsDivision from '../pages/RewardsDivision';
 import PlayerDetails from '../pages/PlayerDetails';
 
+export default function AppRouter() {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Rutas públicas */}
+        <Route
+          path="/"
+          element={
+            <PageWrapper>
+              <Home />
+            </PageWrapper>
+          }
+        />
+        <Route
+          path="/auth"
+          element={
+            <PageWrapper>
+              <AuthPage />
+            </PageWrapper>
+          }
+        />
+
+        {/* Rutas privadas */}
+        <Route
+          path="/match"
+          element={
+            <PrivateRoute>
+              <PageWrapper>
+                <Match />
+              </PageWrapper>
+            </PrivateRoute>
+          }
+        >
+          <Route
+            path="mypredictions"
+            element={
+              <PageWrapper>
+                <MyPredictions />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="details"
+            element={
+              <PageWrapper>
+                <Details />
+              </PageWrapper>
+            }
+          />
+        </Route>
+        <Route
+          path="/scout-players"
+          element={
+            <PrivateRoute>
+              <PageWrapper>
+                <ScoutPlayers />
+              </PageWrapper>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/divisions"
+          element={
+            <PrivateRoute>
+              <PageWrapper>
+                <Divisions />
+              </PageWrapper>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <PageWrapper>
+                <Profile />
+              </PageWrapper>
+            </PrivateRoute>
+          }
+        >
+          <Route
+            path="personal-data"
+            element={
+              <PageWrapper>
+                <PersonalData />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="notifications"
+            element={
+              <PageWrapper>
+                <Notifications />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="help"
+            element={
+              <PageWrapper>
+                <Help />
+              </PageWrapper>
+            }
+          />
+          <Route
+            path="setting"
+            element={
+              <PageWrapper>
+                <Setting />
+              </PageWrapper>
+            }
+          />
+        </Route>
+
+        {/* Rutas para las páginas de recompensas */}
+        <Route
+          path="/divisions/rewards-division"
+          element={
+            <PageWrapper>
+              <RewardsDivision />
+            </PageWrapper>
+          }
+        />
+
+        <Route
+          path="/scout-players/player-details/:id"
+          element={
+            <PageWrapper>
+              <PlayerDetails />
+            </PageWrapper>
+          }
+        />
+
+        {/* Ruta para la página de error 404 */}
+        <Route
+          path="*"
+          element={
+            <PageWrapper>
+              <NotFound />
+            </PageWrapper>
+          }
+        />
+      </Routes>
+    </AnimatePresence>
+  );
+}
+
+// Componente PageWrapper para animar cada vista
 function PageWrapper({ children }) {
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      transition={{ duration: 0.5 }}
     >
       {children}
     </motion.div>
-  );
-}
-
-export default function AppRouter() {
-  const location = useLocation();
-
-  return (
-    <AnimatePresence>
-      <Routes location={location} key={location.pathname}>
-        {/* Rutas públicas */}
-        <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
-        <Route path="/auth" element={<PageWrapper><AuthPage /></PageWrapper>} />
-
-        {/* Rutas privadas */}
-        <Route element={<PrivateRoute />}>
-          <Route path="/profile" element={<PageWrapper><Profile /></PageWrapper>} />
-          <Route path="/profile/personal-data" element={<PageWrapper><PersonalData /></PageWrapper>} />
-          <Route path="/profile/notifications" element={<PageWrapper><Notifications /></PageWrapper>} />
-          <Route path="/profile/help" element={<PageWrapper><Help /></PageWrapper>} />
-          <Route path="/match" element={<PageWrapper><Match /></PageWrapper>} />
-          <Route path="/match/mypredictions" element={<PageWrapper><MyPredictions /></PageWrapper>} />
-          <Route path="/scout-players" element={<PageWrapper><ScoutPlayers /></PageWrapper>} />
-          <Route path="/divisions" element={<PageWrapper><Divisions /></PageWrapper>} />
-          <Route path="/details" element={<PageWrapper><Details /></PageWrapper>} />
-          <Route path="/setting" element={<PageWrapper><Setting /></PageWrapper>} />
-          <Route path="/rewards-division" element={<PageWrapper><RewardsDivision /></PageWrapper>} />
-          <Route path="/player-details" element={<PageWrapper><PlayerDetails /></PageWrapper>} />
-        </Route>
-
-        {/* Ruta para la página de error 404 */}
-        <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
-      </Routes>
-    </AnimatePresence>
   );
 }
