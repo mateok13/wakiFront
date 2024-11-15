@@ -21,146 +21,30 @@ export default function AppRouter() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence>
       <Routes location={location} key={location.pathname}>
         {/* Rutas públicas */}
-        <Route
-          path="/"
-          element={
-            <PageWrapper>
-              <Home />
-            </PageWrapper>
-          }
-        />
-        <Route
-          path="/auth"
-          element={
-            <PageWrapper>
-              <AuthPage />
-            </PageWrapper>
-          }
-        />
+        <Route path="/" element={<Home />} />
+        <Route path="/auth" element={<AuthPage />} />
 
         {/* Rutas privadas */}
-        <Route
-          path="/match"
-          element={
-            <PrivateRoute>
-              <PageWrapper>
-                <Match />
-              </PageWrapper>
-            </PrivateRoute>
-          }
-        >
-          <Route
-            path="mypredictions"
-            element={
-              <PageWrapper>
-                <MyPredictions />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="details"
-            element={
-              <PageWrapper>
-                <Details />
-              </PageWrapper>
-            }
-          />
+        <Route element={<PrivateRoute />}>
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/personal-data" element={<PersonalData />} />
+          <Route path="/profile/notifications" element={<Notifications />} />
+          <Route path="/profile/help" element={<Help />} />
+          <Route path="/match" element={<Match />} />
+          <Route path="/match/mypredictions" element={<MyPredictions />} />
+          <Route path="/scout-players" element={<ScoutPlayers />} />
+          <Route path="/divisions" element={<Divisions />} />
+          <Route path="/details" element={<Details />} />
+          <Route path="/setting" element={<Setting />} />
+          <Route path="/rewards-division" element={<RewardsDivision />} />
+          <Route path="/player-details" element={<PlayerDetails />} />
         </Route>
-        <Route
-          path="/scout-players"
-          element={
-            <PrivateRoute>
-              <PageWrapper>
-                <ScoutPlayers />
-              </PageWrapper>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/divisions"
-          element={
-            <PrivateRoute>
-              <PageWrapper>
-                <Divisions />
-              </PageWrapper>
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <PageWrapper>
-                <Profile />
-              </PageWrapper>
-            </PrivateRoute>
-          }
-        >
-          <Route
-            path="personal-data"
-            element={
-              <PageWrapper>
-                <PersonalData />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="notifications"
-            element={
-              <PageWrapper>
-                <Notifications />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="help"
-            element={
-              <PageWrapper>
-                <Help />
-              </PageWrapper>
-            }
-          />
-          <Route
-            path="setting"
-            element={
-              <PageWrapper>
-                <Setting />
-              </PageWrapper>
-            }
-          />
-        </Route>
-
-        {/* Rutas para las páginas de recompensas */}
-        <Route
-          path="/divisions/rewards-division"
-          element={
-            <PageWrapper>
-              <RewardsDivision />
-            </PageWrapper>
-          }
-        />
-
-        <Route
-          path="/scout-players/player-details/:id"
-          element={
-            <PageWrapper>
-              <PlayerDetails />
-            </PageWrapper>
-          }
-        />
 
         {/* Ruta para la página de error 404 */}
-        <Route
-          path="*"
-          element={
-            <PageWrapper>
-              <NotFound />
-            </PageWrapper>
-          }
-        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </AnimatePresence>
   );
@@ -173,7 +57,6 @@ function PageWrapper({ children }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      transition={{ duration: 0.5 }}
     >
       {children}
     </motion.div>
